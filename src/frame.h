@@ -7,6 +7,6 @@
 typedef struct {
     uint24_t length; // should always be CIPHERTEXT_SIZE ?
     uint8_t type;
-    varint stream_id;
+    uint64_t stream_id;
     uint8_t ciphertext[CIPHERTEXT_SIZE];
 } BN_FRAME;
