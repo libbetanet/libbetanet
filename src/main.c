@@ -1,1 +1,1 @@
-put things here
+int main() { return 0; }
