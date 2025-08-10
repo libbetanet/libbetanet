@@ -3,6 +3,7 @@
 #include "htx/varint.h"
 #include "htx/nonce.h"
 #include "htx/errors.h"
+#include <stdio.h>
 #include <string.h>
 
 size_t htx_pack_frame(uint8_t *out, size_t out_cap,
@@ -65,3 +66,52 @@ int htx_unpack_frame(const uint8_t *buf, size_t len,
   }
   return (int)ct_len;
 }
+
+void print_htx_hdr_info(const htx_hdr_info *info, uint8_t *out,
+                        uint32_t out_len) {
+  printf("PACKET\t");
+
+  switch (info->type) {
+  case HTX_T_STREAM:
+    printf("type=STREAM");
+    break;
+  case HTX_T_CLOSE:
+    printf("type=CLOSE");
+    break;
+  case HTX_T_FLOW:
+    printf("type=FLOW");
+    break;
+  case HTX_T_ACK:
+    printf("type=ACK");
+    break;
+  case HTX_T_KEYUPDATE:
+    printf("type=KEYUPDATE");
+    break;
+  case HTX_T_PADDING:
+    printf("type=PADDING");
+    break;
+  default:
+    printf("type=unknown");
+    break;
+  }
+
+  printf("\n\tpacket number: %zu", info->pkt_num);
+
+  if (info->has_stream) {
+    printf("\n\tstream id: %zu\t", info->stream_id);
+  } else {
+    printf("\n\tstream id: none\t");
+  }
+
+  printf("\n\tmessage len: %u", out_len);
+  printf("\n\tmessage (txt): \"%.*s\"", out_len, out);
+  printf("\n\tmessage (hex): \n\t\t");
+  for (uint32_t i = 0; i < out_len; i++) {
+    printf("0x%02x ", out[i]);
+    if ((i + 1) % 8 == 0) {
+      printf("\n\t\t");
+    }
+  }
+  puts("\n");
+}
+
