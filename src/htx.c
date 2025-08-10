@@ -31,7 +31,7 @@ size_t htx_pack_stream(htx_ctx_t *ctx, htx_dir_t dir, uint64_t stream_id,
 }
 
 size_t htx_pack_close(htx_ctx_t *ctx, htx_dir_t dir, uint64_t close_code,
-                      uint64_t reason_len, uint8_t* reason, uint8_t *out,
+                      uint64_t reason_len, const uint8_t* reason, uint8_t *out,
                       size_t out_cap) {
   htx_dir_keys_t *dk = (dir == HTX_DIR_C2S) ? &ctx->c2s : &ctx->s2c;
   uint64_t pkt = dk->next_pkt_num++;
