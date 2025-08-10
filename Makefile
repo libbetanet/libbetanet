@@ -1,27 +1,51 @@
-CC := gcc -c
-LD := gcc
+# Makefile
+CC      ?= cc
+CFLAGS  ?= -O2 -g -std=c11 -Wall -Wextra -Werror -fPIC
+LDFLAGS ?=
+LIBS    ?= -lcrypto
 
-RM := rm -f
-MKDIR := mkdir -p -v
+INCDIR  := include
+SRCDIR  := src
+TOOLDIR := tools
+TESTDIR := tests
+BUILDDIR:= build
 
-SRC := $(wildcard src/*.c)
-OBJ := $(SRC:%=%.o)
+INCLUDES := -I$(INCDIR)
 
-CFLAGS := -Wall -Wextra
-LDFLAGS := 
+SRC := \
+  $(SRCDIR)/htx.c \
+  $(SRCDIR)/frame.c \
+  $(SRCDIR)/varint.c \
+  $(SRCDIR)/aead_openssl.c \
 
-NAME=bin/idk
+OBJS := $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
 
-all: setup $(NAME)
+LIB := $(BUILDDIR)/libhtx.a
 
-$(NAME): $(OBJ)
-	$(LD) $(LDFLAGS) $^ -o $@
+TEST := $(BUILDDIR)/test_main
+TOOL := $(BUILDDIR)/htx-dump
 
-%.c.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+.PHONY: all clean test
 
-setup:
-	$(MKDIR) bin
+all: $(LIB) $(TEST) $(TOOL)
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(LIB): $(OBJS)
+	ar rcs $@ $(OBJS)
+
+$(TEST): $(TESTDIR)/test_main.c $(LIB)
+	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LIB) $(LIBS)
+
+$(TOOL): $(TOOLDIR)/htx-dump.c $(LIB)
+	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LIB) $(LIBS)
+
+test: $(TEST)
+	$(TEST)
 
 clean:
-	$(RM) $(OBJ) $(NAME)
+	rm -rf $(BUILDDIR)
