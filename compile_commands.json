@@ -1,0 +1,124 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/htx.o",
+      "src/htx.c"
+    ],
+    "directory": "/home/me/Proj/libbetanet",
+    "file": "/home/me/Proj/libbetanet/src/htx.c",
+    "output": "/home/me/Proj/libbetanet/build/htx.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/frame.o",
+      "src/frame.c"
+    ],
+    "directory": "/home/me/Proj/libbetanet",
+    "file": "/home/me/Proj/libbetanet/src/frame.c",
+    "output": "/home/me/Proj/libbetanet/build/frame.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/varint.o",
+      "src/varint.c"
+    ],
+    "directory": "/home/me/Proj/libbetanet",
+    "file": "/home/me/Proj/libbetanet/src/varint.c",
+    "output": "/home/me/Proj/libbetanet/build/varint.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/aead_openssl.o",
+      "src/aead_openssl.c"
+    ],
+    "directory": "/home/me/Proj/libbetanet",
+    "file": "/home/me/Proj/libbetanet/src/aead_openssl.c",
+    "output": "/home/me/Proj/libbetanet/build/aead_openssl.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-c",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-Iinclude",
+      "build/libhtx.a",
+      "-o",
+      "build/test_main",
+      "tests/test_main.c"
+    ],
+    "directory": "/home/me/Proj/libbetanet",
+    "file": "/home/me/Proj/libbetanet/tests/test_main.c",
+    "output": "/home/me/Proj/libbetanet/build/test_main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-c",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-Iinclude",
+      "build/libhtx.a",
+      "-o",
+      "build/htx-dump",
+      "tools/htx-dump.c"
+    ],
+    "directory": "/home/me/Proj/libbetanet",
+    "file": "/home/me/Proj/libbetanet/tools/htx-dump.c",
+    "output": "/home/me/Proj/libbetanet/build/htx-dump"
+  }
+]

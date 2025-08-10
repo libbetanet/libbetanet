@@ -1,14 +1,25 @@
 # Makefile
+
+# Should be either debug|release
+TARGET  ?= debug
+
 CC      ?= cc
-CFLAGS  ?= -O2 -g -std=c11 -Wall -Wextra -Werror -fPIC
+CFLAGS  ?= -std=c11 -Wall -Wextra -Werror -fPIC
 LDFLAGS ?=
 LIBS    ?= -lcrypto
+
+ifeq ($(TARGET), debug)
+	CFLAGS += -g -DDEBUG
+else ifeq ($(TARGET), release)
+	CFLAGS += -O2
+endif
 
 INCDIR  := include
 SRCDIR  := src
 TOOLDIR := tools
 TESTDIR := tests
 BUILDDIR:= build
+
 
 INCLUDES := -I$(INCDIR)
 
