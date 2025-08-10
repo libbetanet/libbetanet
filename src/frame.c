@@ -67,7 +67,7 @@ int htx_unpack_frame(const uint8_t *buf, size_t len,
   return (int)ct_len;
 }
 
-void print_htx_hdr_info(const htx_hdr_info *info, uint8_t *out,
+void htx_print_hdr_info(const htx_hdr_info *info, uint8_t *out,
                         uint32_t out_len) {
   printf("PACKET\t");
 
