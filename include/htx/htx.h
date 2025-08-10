@@ -29,6 +29,10 @@ size_t htx_pack_stream(htx_ctx_t *ctx, htx_dir_t dir, uint64_t stream_id,
                        const uint8_t *pt, uint32_t pt_len,
                        uint8_t *out, size_t out_cap);
 
+size_t htx_pack_close(htx_ctx_t *ctx, htx_dir_t dir, uint64_t close_code,
+                      uint64_t reason_len, uint8_t* reason, uint8_t *out,
+                      size_t out_cap);
+
 int    htx_unpack_any(htx_ctx_t *ctx, htx_dir_t dir,
                       const uint8_t *buf, size_t len,
                       htx_hdr_info *info_out,

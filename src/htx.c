@@ -1,4 +1,5 @@
 #include "htx/htx.h"
+#include "htx/varint.h"
 #include <string.h>
 
 int htx_init(htx_ctx_t *ctx,
@@ -27,6 +28,21 @@ size_t htx_pack_stream(htx_ctx_t *ctx, htx_dir_t dir, uint64_t stream_id,
     uint64_t pkt = dk->next_pkt_num++;
     return htx_pack_frame(out, out_cap, HTX_T_STREAM, pkt, true, stream_id,
         pt, pt_len, dk->key, dk->salt);
+}
+
+size_t htx_pack_close(htx_ctx_t *ctx, htx_dir_t dir, uint64_t close_code,
+                      uint64_t reason_len, uint8_t* reason, uint8_t *out,
+                      size_t out_cap) {
+  htx_dir_keys_t *dk = (dir == HTX_DIR_C2S) ? &ctx->c2s : &ctx->s2c;
+  uint64_t pkt = dk->next_pkt_num++;
+
+  uint8_t pt[8 + 8 + reason_len];
+  uint32_t pt_len = htx_qvar_write(pt, close_code);
+  pt_len += htx_qvar_write(&pt[pt_len], reason_len);
+  memcpy(&pt[pt_len], reason, reason_len);
+
+  return htx_pack_frame(out, out_cap, HTX_T_CLOSE, pkt, false, 0, pt, pt_len,
+                        dk->key, dk->salt);
 }
 
 int htx_unpack_any(htx_ctx_t *ctx, htx_dir_t dir,
