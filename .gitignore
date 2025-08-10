@@ -6,4 +6,5 @@
 *.dylib
 .DS_Store
 *.swp
+.vscode/
 .cache

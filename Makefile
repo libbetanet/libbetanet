@@ -28,6 +28,7 @@ SRC := \
   $(SRCDIR)/frame.c \
   $(SRCDIR)/varint.c \
   $(SRCDIR)/aead_openssl.c \
+	$(SRCDIR)/X25519_utils.c
 
 OBJS := $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
 
