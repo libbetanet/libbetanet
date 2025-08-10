@@ -3,6 +3,7 @@
 #include <inttypes.h>
 #include "htx/htx.h"
 #include "htx/errors.h"
+#include "htx/X25519_utils.h"
 
 int main(void) {
   const uint8_t key[32] = {
@@ -33,5 +34,26 @@ int main(void) {
   r = htx_unpack_any(&ctx, HTX_DIR_C2S, frame, fsz, &info, out, sizeof(out));
   if (r != HTX_ERR_DECRYPT) { fprintf(stderr, "tamper expected decrypt error, got %d\n", r); return 4; }
   printf("Tamper test OK\n");
+
+
+
+  /* X25519 keypair generation test */
+  EVP_PKEY* pkey = generate_keypair();
+
+  unsigned char* private_key = get_private_key(pkey);
+  unsigned char* public_key = get_public_key(pkey);
+
+  printf("private key: ");
+  for (size_t idx = 0; idx < 32; ++idx) {
+    printf("%02x", private_key[idx]);
+  }
+  printf("\n");
+
+  printf("public key: ");
+  for (size_t idx = 0; idx < 32; ++idx) {
+    printf("%02x", public_key[idx]);
+  }
+  printf("\n");
+
   return 0;
 }
