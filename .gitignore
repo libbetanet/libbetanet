@@ -1,2 +1,8 @@
-bin/
-*.o
+/build/
+/*.o
+*.obj
+*.a
+*.so
+*.dylib
+.DS_Store
+*.swp
