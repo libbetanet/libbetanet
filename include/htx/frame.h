@@ -41,7 +41,7 @@ int htx_unpack_frame(const uint8_t *buf, size_t len,
                      uint8_t *pt_out, size_t pt_cap);
 
 // Debug pretty print of htx_hdr_info
-void htx_print_hdr_info(const htx_hdr_info *info, uint8_t *out,
-                        uint32_t out_len);
+void htx_print_hdr_info(const htx_hdr_info *info, uint8_t *body,
+                        uint32_t body_len);
 
 #endif
