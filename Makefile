@@ -1,5 +1,3 @@
-# Makefile
-
 # Should be either debug|release
 TARGET  ?= debug
 
@@ -61,3 +59,40 @@ test: $(TEST)
 
 clean:
 	rm -rf $(BUILDDIR)
+
+FUZZ_CC ?= clang
+FUZZ_CFLAGS = -O1 -g -fsanitize=address,undefined -I$(INCDIR) -fno-sanitize=function,vptr
+FUZZ_LDFLAGS = -fsanitize=address,undefined,fuzzer -fno-sanitize=function,vptr
+FUZZ_LIBS = -lcrypto
+
+FUZZ_SRCS := $(wildcard fuzz/*.c)
+
+FUZZ_BINS := $(FUZZ_SRCS:fuzz/%.c=build/fuzz_%)
+
+FUZZ_OBJS_DIR := $(BUILDDIR)/fuzz_objs
+FUZZ_OBJS := $(SRC:$(SRCDIR)/%.c=$(FUZZ_OBJS_DIR)/%.o)
+
+.PHONY: fuzz fuzz-smoke
+
+fuzz: $(FUZZ_BINS)
+
+$(FUZZ_OBJS_DIR)/fuzz_%.o: fuzz/%.c | $(FUZZ_OBJS_DIR)
+	  @echo "  FUZZ CC   $<"
+		@$(FUZZ_CC) $(FUZZ_CFLAGS) -c $< -o $@
+
+build/fuzz_%: $(FUZZ_OBJS_DIR)/fuzz_%.o $(FUZZ_OBJS)
+	  @echo "  FUZZ LD   $@"
+	  @$(FUZZ_CC) $(FUZZ_CFLAGS) $^ -o $@ $(FUZZ_LDFLAGS) $(FUZZ_LIBS)
+
+$(FUZZ_OBJS_DIR)/%.o: $(SRCDIR)/%.c | $(FUZZ_OBJS_DIR)
+	  @echo "  FUZZ CC   $<"
+	  @$(FUZZ_CC) $(FUZZ_CFLAGS) -c $< -o $@
+
+$(FUZZ_OBJS_DIR):
+	  @mkdir -p $(FUZZ_OBJS_DIR)
+
+fuzz-smoke: fuzz 
+	  @mkdir -p fuzz/corpora/varint fuzz/corpora/pack 
+		ASAN_OPTIONS=detect_leaks=0 ./build/fuzz_varint -max_total_time=60 fuzz/corpora/varint || true 
+		ASAN_OPTIONS=detect_leaks=0 ./build/fuzz_pack_roundtrip -max_total_time=60 fuzz/corpora/pack || true 
+		ASAN_OPTIONS=detect_leaks=0 ./build/fuzz_mutation -max_total_time=60 fuzz/corpora/pack || true
