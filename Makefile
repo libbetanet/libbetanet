@@ -1,6 +1,3 @@
-CC := gcc -c
-LD := gcc
-
 RM := rm -f
 MKDIR := mkdir -p -v
 
@@ -15,10 +12,10 @@ NAME=bin/idk
 all: setup $(NAME)
 
 $(NAME): $(OBJ)
-	$(LD) $(LDFLAGS) $^ -o $@
+	$(CC) $(LDFLAGS) $^ -o $@
 
 %.c.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
 
 setup:
 	$(MKDIR) bin
