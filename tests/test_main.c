@@ -1,12 +1,9 @@
 #include "htx/errors.h"
 #include "htx/htx.h"
 #include <inttypes.h>
+#include <openssl/evp.h>
 #include <stdio.h>
 #include <string.h>
-#include <inttypes.h>
-#include "htx/htx.h"
-#include "htx/errors.h"
-#include "htx/X25519_utils.h"
 
 int main(void) {
   const uint8_t key[32] = {0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -57,8 +54,8 @@ int main(void) {
   const uint8_t reason[] = "test reason";
   uint8_t frame_close[1024];
   size_t fsz_close =
-      htx_pack_close(&ctx, HTX_DIR_C2S, 0xdeadbeef, sizeof(reason) - 1,
-                     reason, frame_close, sizeof(frame_close));
+      htx_pack_close(&ctx, HTX_DIR_C2S, 0xdeadbeef, sizeof(reason) - 1, reason,
+                     frame_close, sizeof(frame_close));
   if (fsz_close == 0) {
     fprintf(stderr, "pack fail\n");
     return 2;
@@ -74,25 +71,6 @@ int main(void) {
   }
 
   htx_print_hdr_info(&info_close, out_close, r_close);
-  
-  { /* X25519 keypair generation test */
-    EVP_PKEY* pkey = generate_keypair();
-
-    unsigned char* private_key = get_private_key(pkey);
-    unsigned char* public_key = get_public_key(pkey);
-
-    printf("private key: ");
-    for (size_t idx = 0; idx < 32; ++idx) {
-      printf("%02x", private_key[idx]);
-    }
-    printf("\n");
-
-    printf("public key: ");
-    for (size_t idx = 0; idx < 32; ++idx) {
-      printf("%02x", public_key[idx]);
-    }
-    printf("\n");
-  }
 
   return 0;
 }

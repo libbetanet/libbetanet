@@ -1,4 +1,5 @@
 /build/
+/ext/install
 /*.o
 *.obj
 *.a

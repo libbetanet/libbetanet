@@ -1,10 +1,17 @@
 # Should be either debug|release
 TARGET  ?= debug
 
+INCDIR  := $(CURDIR)/include
+SRCDIR  := $(CURDIR)/src
+TOOLDIR := $(CURDIR)/tools
+TESTDIR := $(CURDIR)/tests
+EXTDIR  := $(CURDIR)/ext
+BUILDDIR:= $(CURDIR)/build
+
 CC      ?= cc
 CFLAGS  ?= -std=c11 -Wall -Wextra -Werror -fPIC
-LDFLAGS ?=
-LIBS    ?= -lcrypto
+LDFLAGS ?= -L$(EXTDIR)/install/lib
+LIBS    ?= -lcrypto -lnoisekeys -lnoiseprotobufs -lnoiseprotocol
 
 ifeq ($(TARGET), debug)
 	CFLAGS += -g -DDEBUG
@@ -12,21 +19,13 @@ else ifeq ($(TARGET), release)
 	CFLAGS += -O2
 endif
 
-INCDIR  := include
-SRCDIR  := src
-TOOLDIR := tools
-TESTDIR := tests
-BUILDDIR:= build
-
-
-INCLUDES := -I$(INCDIR)
+INCLUDES := -I$(INCDIR) -I$(EXTDIR)/install/include
 
 SRC := \
   $(SRCDIR)/htx.c \
   $(SRCDIR)/frame.c \
   $(SRCDIR)/varint.c \
   $(SRCDIR)/aead_openssl.c \
-	$(SRCDIR)/X25519_utils.c
 
 OBJS := $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
 
@@ -35,9 +34,9 @@ LIB := $(BUILDDIR)/libhtx.a
 TEST := $(BUILDDIR)/test_main
 TOOL := $(BUILDDIR)/htx-dump
 
-.PHONY: all clean test
+.PHONY: ext full_clean all clean test
 
-all: $(LIB) $(TEST) $(TOOL)
+all: ext $(LIB) $(TEST) $(TOOL)
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
@@ -49,16 +48,23 @@ $(LIB): $(OBJS)
 	ar rcs $@ $(OBJS)
 
 $(TEST): $(TESTDIR)/test_main.c $(LIB)
-	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LIB) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) $< -o $@ $(LIB) $(LIBS)
 
 $(TOOL): $(TOOLDIR)/htx-dump.c $(LIB)
-	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LIB) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) $< -o $@ $(LIB) $(LIBS)
+
+ext:
+	$(MAKE) -C $(EXTDIR) libs
 
 test: $(TEST)
 	$(TEST)
 
 clean:
 	rm -rf $(BUILDDIR)
+
+
+full_clean: clean
+	$(MAKE) -C $(EXTDIR) clean
 
 FUZZ_CC ?= clang
 FUZZ_CFLAGS = -O1 -g -fsanitize=address,undefined -I$(INCDIR) -fno-sanitize=function,vptr
