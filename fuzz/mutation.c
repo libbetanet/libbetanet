@@ -1,4 +1,3 @@
-// fuzz/fuzz_mutation.c
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
