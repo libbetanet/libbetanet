@@ -96,10 +96,10 @@ void htx_print_hdr_info(const htx_hdr_info *info, uint8_t *out,
     break;
   }
 
-  printf("\n\tpacket number: %zu", info->pkt_num);
+  printf("\n\tpacket number: %llu", info->pkt_num);
 
   if (info->has_stream) {
-    printf("\n\tstream id: %zu\t", info->stream_id);
+    printf("\n\tstream id: %llu\t", info->stream_id);
   } else {
     printf("\n\tstream id: none\t");
   }
